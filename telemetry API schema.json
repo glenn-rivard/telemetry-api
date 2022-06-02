@@ -1,0 +1,290 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Verisk Telemetry Products & Features",
+    "license": {
+      "name": "MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "localhost:3000"
+    }
+  ],
+  "paths": {
+    "/products": {
+        "get": {
+            "summary": "Get list of products",
+            "tags": [
+                "products"
+            ],
+            "responses": {
+                "200": {
+                    "description": "OK - Successful pull of products",
+                    "headers": {
+                        "x-next": {
+                          "description": "A link to the next page of responses",
+                          "schema": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "title": "products",
+                                "uniqueItems": true,
+                                "maxItems": 15,
+                                "items": {
+                                    "$ref": "#/components/schemas/product"
+                                }
+                            },
+                            "examples": {
+                                "example-1": {
+                                    "value": [
+                                        {
+                                            "productId": 1500,
+                                            "name": "Touchstone",
+                                            "majorVersion": 9,
+                                            "minorVersion": 0,
+                                            "softwareBuildNumber": "9.5.0.3345",
+                                            "databaseBuildNumber": "9.5.0.3322"
+                                        },
+                                        {
+                                            "productId": 1501,
+                                            "name": "Touchstone Re",
+                                            "majorVersion": 9,
+                                            "minorVersion": 0,
+                                            "softwareBuildNumber": "9.5.0.3345",
+                                            "databaseBuildNumber": "9.5.0.3322"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "default": {
+                    "description": "unexpected error",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/Error"
+                        }
+                      }
+                    }
+                  }
+            },
+            "operationId": "get-products",
+            "description": "Pull a list of products from product database",
+            "parameters": [
+                {
+                    "schema": {
+                        "type": "integer",
+                        "default": "10",
+                        "maximum": 15,
+                        "minimum": 4
+                    },
+                    "in": "query",
+                    "name": "list",
+                    "description": "Number of products to be displayed"
+                }
+            ]
+        }
+    }
+  },
+  "components": {
+    "schemas": {
+        "badRequest": {
+            "title": "Bad Request",
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "object",
+                    "properties": {
+                        "message": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "notFound": {
+            "title": "Not Found",
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "object",
+                    "properties": {
+                        "message": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "product": {
+            "title": "product",
+            "type": "object",
+            "description": "Model containing product information",
+            "properties": {
+                "productId": {
+                    "type": "integer",
+                    "example": "57",
+                    "minimum": 0,
+                    "maximum": 20000
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Touchstone Re",
+                    "minLength": 1,
+                    "maxLength": 1028
+                },
+                "majorVersion": {
+                    "type": "integer",
+                    "example": "9",
+                    "minimum": 0,
+                    "maximum": 500
+                },
+                "minorVersion": {
+                    "type": "integer",
+                    "example": "2",
+                    "minimum": 0,
+                    "maximum": 500
+                },
+                "softwareBuildNumber": {
+                    "type": "string",
+                    "example": "9.5.0.3345",
+                    "minLength": 1,
+                    "maxLength": 500
+                },
+                "databaseBuildNumber": {
+                    "type": "string",
+                    "example": "9.5.0.3322",
+                    "minLength": 1,
+                    "maxLength": 500
+                }
+            },
+            "required": [
+                "productdId",
+                "name",
+                "majorVersion"
+            ]
+        },
+        "products": {
+            "type": "array",
+            "title": "products",
+            "minItems": 0,
+            "maxItems": 500,
+            "items": {
+                "$ref": "#/components/schemas/product"
+            }
+        },
+        "featureCategory": {
+            "title": "featureCategory",
+            "type": "object",
+            "properties": {
+                "categoryId": {
+                    "type": "integer",
+                    "maximum": 20000,
+                    "minimum": 1,
+                    "example": "1151"
+                },
+                "productId": {
+                    "type": "integer",
+                    "maximum": 20000,
+                    "minimum": 1,
+                    "example": "1151"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "World AP (2014) - Scenarios",
+                    "minLength": 1,
+                    "maxLength": 255
+                }
+            },
+            "required": [
+                "categoryId",
+                "productId",
+                "name"
+            ]
+        },
+        "featureCategories": {
+            "type": "array",
+            "title": "featureCategories",
+            "maxItems": 15,
+            "items": {
+                "$ref": "#/components/schemas/featureCategories"
+            }
+        },
+        "feature": {
+            "title": "feature",
+            "type": "object",
+            "properties": {
+                "featureId": {
+                    "type": "integer",
+                    "maximum": 20000,
+                    "minimum": 1,
+                    "example": "1151"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "World AP (2014) - Scenarios",
+                    "minLength": 1,
+                    "maxLength": 255
+                },
+                "categoryId": {
+                    "type": "integer",
+                    "maximum": 20000,
+                    "minimum": 1,
+                    "example": "1151"
+                },
+                "productId": {
+                    "type": "integer",
+                    "maximum": 20000,
+                    "minimum": 1,
+                    "example": "1151"
+                },
+                "categoryName": {
+                    "type": "string",
+                    "example": "Import",
+                    "minLength": 1,
+                    "maxLength": 255
+                },
+                "productName": {
+                    "type": "string",
+                    "example": "Touchstone Re",
+                    "minLength": 1,
+                    "maxLength": 255
+                }
+            },
+            "required": [
+                "categoryId",
+                "productId",
+                "name"
+            ]
+        },
+        "features": {
+            "type": "array",
+            "title": "featureCategories",
+            "maxItems": 1000,
+            "items": {
+                "$ref": "#/components/schemas/features"
+            }
+        }
+    },
+"securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    }
+  },
+  "security": [
+    {
+      "BasicAuth": []
+    }
+  ]
+}
